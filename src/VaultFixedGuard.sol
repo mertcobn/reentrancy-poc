@@ -12,9 +12,9 @@ contract VaultFixedGuard is ReentrancyGuardTransient {
 
     function withdraw() external nonReentrant {
         uint256 bal = balances[msg.sender];
-        require(bal > 0, "no balance");
+        require(bal > 0, "No balance");
         (bool ok,) = msg.sender.call{value: bal}("");
-        require(ok, "transfer failed");
+        require(ok, "Transfer failed");
         balances[msg.sender] = 0;
     }
 
