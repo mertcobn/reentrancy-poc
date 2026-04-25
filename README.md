@@ -10,7 +10,7 @@ The withdraw function in the Vault contract violates the Checks-Effects-Interact
 
 The attack unfolds in seven steps:
 
-1. **Setup.** Honest users (alice, bob, charlie) each deposit 1 ETH into the vault. The attacker also deposits 1 ETH through their malicious contract — this initial deposit is required to pass the require(bal > 0, "no balance") check inside withdraw. The vault now holds 4 ETH in total.
+1. **Setup.** Honest users (alice, bob, charlie) each deposit 1 ETH into the vault. The attacker also deposits 1 ETH through their malicious contract. This initial deposit is required to pass the require(bal > 0, "no balance") check inside withdraw. The vault now holds 4 ETH in total.
 
 2. **Trigger.** The attacker calls withdraw() on the vault from inside their own Attacker contract.
 
@@ -22,7 +22,7 @@ The attack unfolds in seven steps:
 
 6. **Drain.** The cycle repeats: 1 ETH is withdrawn, receive() re-enters, another 1 ETH is withdrawn, and so on. After 4 iterations, the vault's balance reaches 0. The next getBalance() call returns 0, the if condition fails, and the recursion stops.
 
-7. **Stack unwinding.** As each nested withdraw call returns, the line balances[msg.sender] = 0 finally executes — once per nested call, four times in total. All four writes are no-ops on the same already-stale slot. The attacker contract now holds the full 4 ETH; the vault holds nothing.
+7. **Stack unwinding.** As each nested withdraw call returns, the line balances[msg.sender] = 0 finally executes, once per nested call, four times in total. All four writes are no-ops on the same already-stale slot. The attacker contract now holds the full 4 ETH; the vault holds nothing.
 
 ## Mitigations
 
