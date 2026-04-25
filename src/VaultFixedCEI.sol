@@ -10,10 +10,10 @@ contract VaultFixedCEI {
 
     function withdraw() external {
         uint256 bal = balances[msg.sender];
-        require(bal > 0, "no balance");
+        require(bal > 0, "No balance");
         balances[msg.sender] = 0;
         (bool ok,) = msg.sender.call{value: bal}("");
-        require(ok, "transfer failed");
+        require(ok, "Transfer failed");
     }
 
     function getBalance() external view returns (uint256) {
